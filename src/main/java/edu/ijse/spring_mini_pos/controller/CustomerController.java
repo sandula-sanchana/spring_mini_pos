@@ -1,6 +1,9 @@
 package edu.ijse.spring_mini_pos.controller;
 
+import edu.ijse.spring_mini_pos.service.CustomerService;
+import edu.ijse.spring_mini_pos.service.impl.CustomerServiceImpl;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,4 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 // to communicate with this backend.
 
 public class CustomerController {
+
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerServiceImpl  customerServiceImpl) {
+       this.customerService = customerServiceImpl;
+    }
+
+
+
+    @PostMapping
+    public void saveCustomer(){
+
+        System.out.println("save customer");
+
+    }
 }
