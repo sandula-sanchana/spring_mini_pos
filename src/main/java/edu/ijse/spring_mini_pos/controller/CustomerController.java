@@ -1,11 +1,9 @@
 package edu.ijse.spring_mini_pos.controller;
 
+import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.service.CustomerService;
 import edu.ijse.spring_mini_pos.service.impl.CustomerServiceImpl;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController  // Marks this class as a REST controller that handles HTTP requests
 // convert class in to a rest controller that returns data as response (json)
@@ -27,9 +25,10 @@ public class CustomerController {
 
 
     @PostMapping
-    public void saveCustomer(){
+    public void saveCustomer(@RequestBody CustomerDTO customerDTO) {
 
         System.out.println("save customer");
+        customerService.saveCustomer(customerDTO);
 
     }
 }

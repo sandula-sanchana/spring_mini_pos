@@ -1,5 +1,6 @@
 package edu.ijse.spring_mini_pos.service.impl;
 
+import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.service.CustomerService;
 import org.springframework.stereotype.Service;
 
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class CustomerServiceImpl implements CustomerService {
 
     @Override
-    public void saveCustomer() {
+    public void saveCustomer(CustomerDTO customerDTO) {
 
     }
 }
