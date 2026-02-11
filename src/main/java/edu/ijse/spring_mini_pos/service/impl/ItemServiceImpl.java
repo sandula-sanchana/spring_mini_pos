@@ -22,13 +22,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void saveItem(ItemDTO itemDTO) {
 
-        if(itemRepository.existsById(itemDTO.getItemId())){
+        if(itemRepository.existsById(itemDTO.getId())){
             throw new RuntimeException("Item already exists!");
         }
 
         Item item = new Item(
-                itemDTO.getItemId(),
-                itemDTO.getItemName(),
+                itemDTO.getId(),
+                itemDTO.getName(),
                 itemDTO.getQty(),
                 itemDTO.getPrice()
         );
@@ -40,13 +40,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void updateItem(ItemDTO itemDTO) {
 
-        if(!itemRepository.existsById(itemDTO.getItemId())){
+        if(!itemRepository.existsById(itemDTO.getId())){
             throw new RuntimeException("Item not found!");
         }
 
         Item item = new Item(
-                itemDTO.getItemId(),
-                itemDTO.getItemName(),
+                itemDTO.getId(),
+                itemDTO.getName(),
                 itemDTO.getQty(),
                 itemDTO.getPrice()
         );
