@@ -82,6 +82,149 @@
     </div>
 </div>
 
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+    const BASE_URL = "http://localhost:8080/app/v1/customer";
+
+    function clearForm() {
+        $("#cusId").val("");
+        $("#cusName").val("");
+        $("#cusAddress").val("");
+        $("#cusId").focus();
+    }
+
+    function loadCustomers() {
+        $.ajax({
+            url: BASE_URL,
+            method: "GET",
+            dataType: "json",
+            success: function (customers) {
+                $("#tblCustomers").empty();
+
+                customers.forEach((c) => {
+                    $("#tblCustomers").append(`
+            <tr>
+              <td>${c.cId}</td>
+              <td>${c.cName}</td>
+              <td>${c.cAddress}</td>
+            </tr>
+          `);
+                });
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Load failed: " + (xhr.responseText || xhr.status));
+            }
+        });
+    }
+
+
+    $("#tblCustomers").on("click", "tr", function () {
+        $("#cusId").val($(this).children().eq(0).text());
+        $("#cusName").val($(this).children().eq(1).text());
+        $("#cusAddress").val($(this).children().eq(2).text());
+    });
+
+
+    $("#btnAdd").on("click", function () {
+        const customer = {
+            cId: $("#cusId").val().trim(),
+            cName: $("#cusName").val().trim(),
+            cAddress: $("#cusAddress").val().trim()
+        };
+
+        if (!customer.cId || !customer.cName || !customer.cAddress) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        $.ajax({
+            url: BASE_URL,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(customer),
+            success: function () {
+                alert("Customer saved ✅");
+                clearForm();
+                loadCustomers();
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Save failed: " + (xhr.responseText || xhr.status));
+            }
+        });
+    });
+
+
+    $("#btnUpdate").on("click", function () {
+        const customer = {
+            cId: $("#cusId").val().trim(),
+            cName: $("#cusName").val().trim(),
+            cAddress: $("#cusAddress").val().trim()
+        };
+
+        if (!customer.cId || !customer.cName || !customer.cAddress) {
+            alert("Fill all fields!");
+            return;
+        }
+
+        $.ajax({
+            url: BASE_URL,
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(customer),
+            success: function () {
+                alert("Customer updated ✅");
+                clearForm();
+                loadCustomers();
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Update failed: " + (xhr.responseText || xhr.status));
+            }
+        });
+    });
+
+
+    $("#btnDelete").on("click", function () {
+        const id = $("#cusId").val().trim();
+
+        if (!id) {
+            alert("Enter/select a customer ID first!");
+            return;
+        }
+
+        if (!confirm(`Delete customer ${id}?`)) return;
+
+        $.ajax({
+            url: `${BASE_URL}/${encodeURIComponent(id)}`,
+            method: "DELETE",
+            success: function () {
+                alert("Customer deleted ✅");
+                clearForm();
+                loadCustomers();
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                alert("Delete failed: " + (xhr.responseText || xhr.status));
+            }
+        });
+    });
+
+
+    $("#btnClear").on("click", function () {
+        clearForm();
+    });
+
+
+    $(document).ready(function () {
+        loadCustomers();
+    });
+</script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
