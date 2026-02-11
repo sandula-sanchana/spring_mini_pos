@@ -3,32 +3,52 @@ package edu.ijse.spring_mini_pos.controller;
 import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.service.CustomerService;
 import edu.ijse.spring_mini_pos.service.impl.CustomerServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@RestController  // Marks this class as a REST controller that handles HTTP requests
-// convert class in to a rest controller that returns data as response (json)
-@RequestMapping("app/v1/customer") // Class-level annotation used to define the base URL
-// for all endpoints within this controller.
+import java.util.List;
 
-@CrossOrigin // Enables Cross-Origin Resource Sharing (CORS)
-// allowing frontend applications hosted on different origins
-// to communicate with this backend.
-
+@RestController
+@RequestMapping("app/v1/customer")
+@CrossOrigin
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    public CustomerController(CustomerServiceImpl  customerServiceImpl) {
-       this.customerService = customerServiceImpl;
+    public CustomerController(CustomerServiceImpl customerServiceImpl) {
+        this.customerService = customerServiceImpl;
     }
 
 
-
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public void saveCustomer(@RequestBody CustomerDTO customerDTO) {
-
-        System.out.println("save customer");
         customerService.saveCustomer(customerDTO);
+    }
 
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCustomer(@RequestBody CustomerDTO customerDTO) {
+        customerService.updateCustomer(customerDTO);
+    }
+
+
+    @GetMapping
+    public List<CustomerDTO> getAllCustomers() {
+        return customerService.getAllCustomers();
+    }
+
+
+    @GetMapping("/{id}")
+    public CustomerDTO getCustomer(@PathVariable String id) {
+        return customerService.getCustomer(id);
+    }
+
+
+    @DeleteMapping("/{id}")
+
+    public void deleteCustomer(@PathVariable String id) {
+        customerService.deleteCustomer(id);
     }
 }
