@@ -10,8 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemDTO {
-    private String id;
-    private String name;
+    private String itemId;
+    private String itemName;
     private int qty;
     private double price;
 }

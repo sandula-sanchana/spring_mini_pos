@@ -21,14 +21,12 @@ public class ItemController {
 
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public void saveItem(@RequestBody ItemDTO itemDTO) {
         itemService.saveItem(itemDTO);
     }
 
 
     @PutMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateItem(@RequestBody ItemDTO itemDTO) {
         itemService.updateItem(itemDTO);
     }
@@ -47,7 +45,6 @@ public class ItemController {
 
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteItem(@PathVariable String id) {
         itemService.deleteItem(id);
     }
