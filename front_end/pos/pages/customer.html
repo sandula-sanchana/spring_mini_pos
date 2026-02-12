@@ -130,15 +130,14 @@
 
     $("#btnAdd").on("click", function () {
         const customer = {
-            cId: $("#cusId").val().trim(),
             cName: $("#cusName").val().trim(),
             cAddress: $("#cusAddress").val().trim()
         };
 
-        if (!customer.cId || !customer.cName || !customer.cAddress) {
-            alert("Please fill all fields!");
-            return;
-        }
+        // if (!customer.cId || !customer.cName || !customer.cAddress) {
+        //     alert("Please fill all fields!");
+        //     return;
+        // }
 
         $.ajax({
             url: BASE_URL,

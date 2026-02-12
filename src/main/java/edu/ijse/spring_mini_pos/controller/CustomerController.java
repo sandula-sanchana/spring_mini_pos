@@ -3,7 +3,9 @@ package edu.ijse.spring_mini_pos.controller;
 import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.service.CustomerService;
 import edu.ijse.spring_mini_pos.service.impl.CustomerServiceImpl;
+import edu.ijse.spring_mini_pos.util.APIResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,14 +23,16 @@ public class CustomerController {
 
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void saveCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<APIResponse<String>> saveCustomer(@RequestBody CustomerDTO customerDTO) {
         customerService.saveCustomer(customerDTO);
+        return new ResponseEntity(new APIResponse<>(
+                201,"customer saved",null
+        ),HttpStatus.CREATED);
+
     }
 
 
     @PutMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCustomer(@RequestBody CustomerDTO customerDTO) {
         customerService.updateCustomer(customerDTO);
     }
@@ -47,7 +51,6 @@ public class CustomerController {
 
 
     @DeleteMapping("/{id}")
-
     public void deleteCustomer(@PathVariable int id) {
         customerService.deleteCustomer(id);
     }
