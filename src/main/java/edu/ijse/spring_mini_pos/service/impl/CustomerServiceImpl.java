@@ -2,8 +2,12 @@ package edu.ijse.spring_mini_pos.service.impl;
 
 import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.entity.Customer;
+import edu.ijse.spring_mini_pos.exception.CustomException;
 import edu.ijse.spring_mini_pos.respository.CustomerRepository;
 import edu.ijse.spring_mini_pos.service.CustomerService;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,53 +18,45 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+
+    private final ModelMapper modelMapper;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, ModelMapper modelMapper) {
         this.customerRepository = customerRepository;
+        this.modelMapper = modelMapper;
     }
 
 
     @Override
     public void saveCustomer(CustomerDTO customerDTO) {
 
+        if (customerDTO == null) {
+            throw new CustomException("CUSTOMER DTO NOT FOUND");
+        }
 
-        Customer customer = new Customer(
-                null, // ✅ let DB generate it
-                customerDTO.getCName(),
-                customerDTO.getCAddress()
-        );
+        customerRepository.save(modelMapper.map(customerDTO,Customer.class));
 
-        customerRepository.save(customer);
     }
 
 
     @Override
     public void updateCustomer(CustomerDTO customerDTO) {
 
+        assert customerDTO.getCId() != null;
         if (!customerRepository.existsById(customerDTO.getCId())) {
             throw new RuntimeException("Customer not found");
         }
 
-        Customer customer = new Customer(
-                customerDTO.getCId(),
-                customerDTO.getCName(),
-                customerDTO.getCAddress()
-        );
-
-        customerRepository.save(customer);
+        customerRepository.save(modelMapper.map(customerDTO,Customer.class));
     }
 
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
 
-        return customerRepository.findAll()
-                .stream()
-                .map(customer -> new CustomerDTO(
-                        customer.getCId(),
-                        customer.getCName(),
-                        customer.getCAddress()
-                ))
-                .collect(Collectors.toList());
+        List<Customer> customers = customerRepository.findAll();
+
+        return modelMapper.map(customers,new  TypeToken<List<CustomerDTO>>() {}.getType());
     }
 
 

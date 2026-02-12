@@ -84,6 +84,8 @@
 
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <script>
     const BASE_URL = "http://localhost:8080/app/v1/customer";
@@ -112,10 +114,6 @@
             </tr>
           `);
                 });
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Load failed: " + (xhr.responseText || xhr.status));
             }
         });
     }
@@ -134,24 +132,21 @@
             cAddress: $("#cusAddress").val().trim()
         };
 
-        // if (!customer.cId || !customer.cName || !customer.cAddress) {
-        //     alert("Please fill all fields!");
-        //     return;
-        // }
+
 
         $.ajax({
             url: BASE_URL,
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(customer),
-            success: function () {
-                alert("Customer saved ✅");
-                clearForm();
-                loadCustomers();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Save failed: " + (xhr.responseText || xhr.status));
+            success: function (resp) {
+                if (resp.status === 201 || resp.status === 200) {
+                    showSuccess(resp.message);
+                    clearForm();
+                    loadCustomers();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
             }
         });
     });
@@ -164,24 +159,19 @@
             cAddress: $("#cusAddress").val().trim()
         };
 
-        if (!customer.cId || !customer.cName || !customer.cAddress) {
-            alert("Fill all fields!");
-            return;
-        }
-
         $.ajax({
             url: BASE_URL,
             method: "PUT",
             contentType: "application/json",
             data: JSON.stringify(customer),
-            success: function () {
-                alert("Customer updated ✅");
-                clearForm();
-                loadCustomers();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Update failed: " + (xhr.responseText || xhr.status));
+            success: function (resp) {
+                if (resp.status === 201 || resp.status === 200) {
+                    showSuccess(resp.message);
+                    clearForm();
+                    loadCustomers();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
             }
         });
     });
@@ -200,14 +190,10 @@
         $.ajax({
             url: `${BASE_URL}/${encodeURIComponent(id)}`,
             method: "DELETE",
-            success: function () {
-                alert("Customer deleted ✅");
+            success: function (resp) {
+                showSuccess(resp.message);
                 clearForm();
                 loadCustomers();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Delete failed: " + (xhr.responseText || xhr.status));
             }
         });
     });
@@ -221,6 +207,25 @@
     $(document).ready(function () {
         loadCustomers();
     });
+
+    function showSuccess(message){
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: message,
+            timer: 1800,
+            showConfirmButton: false
+        });
+    }
+
+    function showError(message){
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: message
+        });
+    }
+
 </script>
 
 
