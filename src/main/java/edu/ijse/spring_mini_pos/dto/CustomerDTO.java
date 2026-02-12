@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class CustomerDTO {
 
-    private int cId;
+    private Integer cId;
     private String cName;
     private String cAddress;
 }
