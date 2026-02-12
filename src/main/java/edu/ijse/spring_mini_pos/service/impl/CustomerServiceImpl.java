@@ -24,7 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         Customer customer = new Customer(
-               0,
+                0, // ✅ let DB generate it
                 customerDTO.getCName(),
                 customerDTO.getCAddress()
         );
