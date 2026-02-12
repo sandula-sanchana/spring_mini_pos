@@ -4,6 +4,7 @@ import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.service.CustomerService;
 import edu.ijse.spring_mini_pos.service.impl.CustomerServiceImpl;
 import edu.ijse.spring_mini_pos.util.APIResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class CustomerController {
 
 
     @PostMapping
-    public ResponseEntity<APIResponse<String>> saveCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<APIResponse<String>> saveCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
         customerService.saveCustomer(customerDTO);
         return new ResponseEntity(new APIResponse<>(
                 201,"customer saved",null
