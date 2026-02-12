@@ -2,6 +2,7 @@ package edu.ijse.spring_mini_pos.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomerDTO {
-    @NotNull
+    @Pattern(regexp = "^\\d+$\n")
     private Integer cId;
     @NotBlank(message = "customer name is mandatory")
     private String cName;
