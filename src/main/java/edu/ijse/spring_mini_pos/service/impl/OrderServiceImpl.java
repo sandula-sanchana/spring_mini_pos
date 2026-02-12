@@ -48,10 +48,6 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Cart is empty");
         }
 
-        if (!customerRepo.existsById(orderDTO.getCustomerId())) {
-            throw new RuntimeException("Customer not found: " + orderDTO.getCustomerId());
-        }
-
         if (orderRepo.existsById(orderDTO.getOrderId())) {
             throw new RuntimeException("Order already exists: " + orderDTO.getOrderId());
         }

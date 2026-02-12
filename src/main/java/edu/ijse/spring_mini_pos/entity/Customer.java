@@ -1,6 +1,8 @@
 package edu.ijse.spring_mini_pos.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +17,8 @@ import lombok.Setter;
 public class Customer {
 
     @Id
-    private String cId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int cId;
     private String cName;
     private String cAddress;
 }

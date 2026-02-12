@@ -9,7 +9,7 @@ public interface CustomerService {
     void saveCustomer(CustomerDTO dto);
     void updateCustomer(CustomerDTO dto);
     List<CustomerDTO> getAllCustomers();
-    CustomerDTO getCustomer(String id);
-    void deleteCustomer(String id);
+    CustomerDTO getCustomer(int id);
+    void deleteCustomer(int id);
 
 }

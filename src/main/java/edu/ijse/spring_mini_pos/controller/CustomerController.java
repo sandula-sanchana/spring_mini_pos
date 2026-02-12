@@ -41,14 +41,14 @@ public class CustomerController {
 
 
     @GetMapping("/{id}")
-    public CustomerDTO getCustomer(@PathVariable String id) {
+    public CustomerDTO getCustomer(@PathVariable int id) {
         return customerService.getCustomer(id);
     }
 
 
     @DeleteMapping("/{id}")
 
-    public void deleteCustomer(@PathVariable String id) {
+    public void deleteCustomer(@PathVariable int id) {
         customerService.deleteCustomer(id);
     }
 }

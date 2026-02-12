@@ -22,12 +22,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void saveCustomer(CustomerDTO customerDTO) {
 
-        if (customerRepository.existsById(customerDTO.getCId())) {
-            throw new RuntimeException("Customer already exists");
-        }
 
         Customer customer = new Customer(
-                customerDTO.getCId(),
+               0,
                 customerDTO.getCName(),
                 customerDTO.getCAddress()
         );
@@ -68,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public CustomerDTO getCustomer(String id) {
+    public CustomerDTO getCustomer(int id) {
 
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -82,7 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public void deleteCustomer(String id) {
+    public void deleteCustomer(int id) {
 
         if (!customerRepository.existsById(id)) {
             throw new RuntimeException("Customer not found");
