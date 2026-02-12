@@ -3,6 +3,7 @@ package edu.ijse.spring_mini_pos.exception;
 import edu.ijse.spring_mini_pos.util.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,5 +26,10 @@ public class GlobalExceptionHandler {
                 "null values are not allowed",
                 e.getMessage()
         ), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<APIResponse<String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e){
+
     }
 }
