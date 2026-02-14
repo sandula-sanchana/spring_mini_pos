@@ -2,96 +2,73 @@ package edu.ijse.spring_mini_pos.service.impl;
 
 import edu.ijse.spring_mini_pos.dto.ItemDTO;
 import edu.ijse.spring_mini_pos.entity.Item;
+import edu.ijse.spring_mini_pos.exception.BadRequestException;
+import edu.ijse.spring_mini_pos.exception.ResourceNotFoundException;
 import edu.ijse.spring_mini_pos.respository.ItemRepository;
 import edu.ijse.spring_mini_pos.service.ItemService;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-
-    public ItemServiceImpl(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
-    }
-
+    private final ModelMapper modelMapper;
 
     @Override
     public void saveItem(ItemDTO itemDTO) {
-
-        if(itemRepository.existsById(itemDTO.getItemId())){
-            throw new RuntimeException("Item already exists!");
+        if (itemDTO == null) {
+            throw new BadRequestException("Request body is missing");
+        }
+        if (itemRepository.existsById(itemDTO.getItemId())) {
+            throw new BadRequestException("Item already exists!");
         }
 
-        Item item = new Item(
-                itemDTO.getItemId(),
-                itemDTO.getItemName(),
-                itemDTO.getQty(),
-                itemDTO.getPrice()
-        );
-
-        itemRepository.save(item);
+        itemRepository.save(modelMapper.map(itemDTO, Item.class));
     }
-
 
     @Override
     public void updateItem(ItemDTO itemDTO) {
-
-        if(!itemRepository.existsById(itemDTO.getItemId())){
-            throw new RuntimeException("Item not found!");
+        if (itemDTO == null) {
+            throw new BadRequestException("Request body is missing");
+        }
+        if (itemDTO.getItemId() == null || itemDTO.getItemId().isBlank()) {
+            throw new BadRequestException("Item ID is required for update");
         }
 
-        Item item = new Item(
-                itemDTO.getItemId(),
-                itemDTO.getItemName(),
-                itemDTO.getQty(),
-                itemDTO.getPrice()
-        );
+        Item existing = itemRepository.findById(itemDTO.getItemId())
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
-        itemRepository.save(item);
+        existing.setName(itemDTO.getItemName());
+        existing.setQty(itemDTO.getQty());
+        existing.setPrice(itemDTO.getPrice());
     }
-
 
     @Override
     public List<ItemDTO> getAllItems() {
-
-        return itemRepository.findAll()
-                .stream()
-                .map(item -> new ItemDTO(
-                        item.getId(),
-                        item.getName(),
-                        item.getQty(),
-                        item.getPrice()
-                ))
-                .collect(Collectors.toList());
+        List<Item> items = itemRepository.findAll();
+        return modelMapper.map(items, new TypeToken<List<ItemDTO>>() {}.getType());
     }
-
 
     @Override
     public ItemDTO getItem(String id) {
-
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-
-        return new ItemDTO(
-                item.getId(),
-                item.getName(),
-                item.getQty(),
-                item.getPrice()
-        );
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+        return modelMapper.map(item, ItemDTO.class);
     }
-
 
     @Override
     public void deleteItem(String id) {
-
-        if(!itemRepository.existsById(id)){
-            throw new RuntimeException("Item not found");
+        if (!itemRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Item not found");
         }
-
         itemRepository.deleteById(id);
     }
 }
