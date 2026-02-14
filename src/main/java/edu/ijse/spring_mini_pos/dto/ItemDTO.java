@@ -1,5 +1,7 @@
 package edu.ijse.spring_mini_pos.dto;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +12,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemDTO {
+
+    @Nullable
     private String itemId;
+    @NotBlank(message = "Item name is mandatory")
+    @Size(min = 3, max = 50, message = "Item name must be between 3 and 50 characters")
+    @Pattern(
+            regexp = "^[A-Za-z0-9 ]+$",
+            message = "Item name can contain only letters, numbers and spaces"
+    )
     private String itemName;
+
+    @Min(value = 0, message = "Quantity cannot be negative")
     private int qty;
+
+    @Positive(message = "Price must be greater than 0")
     private double price;
 }
