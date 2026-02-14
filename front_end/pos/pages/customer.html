@@ -3,38 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Customer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../index.html">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="customer.html">customer</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="item.html">item</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="order.html">order</a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="../index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="customer.html">customer</a></li>
+                <li class="nav-item"><a class="nav-link" href="item.html">item</a></li>
+                <li class="nav-item"><a class="nav-link" href="order.html">order</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-
 <div class="container mt-5">
-
 
     <div class="card shadow p-4">
         <h3 class="mb-4">Customer Form</h3>
@@ -58,8 +50,8 @@
 
         <div class="mt-4 d-flex gap-2 flex-wrap">
             <button class="btn btn-success" id="btnAdd" type="button">Add</button>
-            <button class="btn btn-warning" id="btnUpdate" type="button" >Update</button>
-            <button class="btn btn-danger" id="btnDelete" type="button" >Delete</button>
+            <button class="btn btn-warning" id="btnUpdate" type="button">Update</button>
+            <button class="btn btn-danger" id="btnDelete" type="button">Delete</button>
             <button class="btn btn-secondary" id="btnClear" type="button">Clear</button>
         </div>
     </div>
@@ -80,12 +72,11 @@
             </table>
         </div>
     </div>
-</div>
 
+</div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 <script>
     const BASE_URL = "http://localhost:8080/app/v1/customer";
@@ -97,124 +88,7 @@
         $("#cusId").focus();
     }
 
-    function loadCustomers() {
-        $.ajax({
-            url: BASE_URL,
-            method: "GET",
-            dataType: "json",
-            success: function (resp) {
-                $("#tblCustomers").empty();
-
-                const customers = resp.data || [];
-
-                customers.forEach((c) => {
-                    $("#tblCustomers").append(`
-          <tr>
-            <td>${c.cId}</td>
-            <td>${c.cName}</td>
-            <td>${c.cAddress}</td>
-          </tr>
-        `);
-                });
-            },
-            error: function (xhr) {
-                showError(xhr.responseJSON?.message || "Failed to load customers");
-            }
-        });
-    }
-
-
-
-    $("#tblCustomers").on("click", "tr", function () {
-        $("#cusId").val($(this).children().eq(0).text());
-        $("#cusName").val($(this).children().eq(1).text());
-        $("#cusAddress").val($(this).children().eq(2).text());
-    });
-
-
-    $("#btnAdd").on("click", function () {
-        const customer = {
-            cName: $("#cusName").val().trim(),
-            cAddress: $("#cusAddress").val().trim()
-        };
-
-
-
-        $.ajax({
-            url: BASE_URL,
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(customer),
-            success: function (resp) {
-                if (resp.status === 201 || resp.status === 200) {
-                    showSuccess(resp.message);
-                    clearForm();
-                    loadCustomers();
-                } else {
-                    showError(resp.message || "Something went wrong");
-                }
-            }
-        });
-    });
-
-
-    $("#btnUpdate").on("click", function () {
-        const customer = {
-            cId: $("#cusId").val().trim(),
-            cName: $("#cusName").val().trim(),
-            cAddress: $("#cusAddress").val().trim()
-        };
-
-        $.ajax({
-            url: BASE_URL,
-            method: "PUT",
-            contentType: "application/json",
-            data: JSON.stringify(customer),
-            success: function (resp) {
-                if (resp.status === 201 || resp.status === 200) {
-                    showSuccess(resp.message);
-                    clearForm();
-                    loadCustomers();
-                } else {
-                    showError(resp.message || "Something went wrong");
-                }
-            }
-        });
-    });
-
-
-    $("#btnDelete").on("click", function () {
-        const id = $("#cusId").val().trim();
-
-        if (!id) {
-            alert("Enter/select a customer ID first!");
-            return;
-        }
-
-        if (!confirm(`Delete customer ${id}?`)) return;
-
-        $.ajax({
-            url: `${BASE_URL}/${encodeURIComponent(id)}`,
-            method: "DELETE",
-            success: function (resp) {
-                showSuccess(resp.message);
-                clearForm();
-                loadCustomers();
-            }
-        });
-    });
-
-
-    $("#btnClear").on("click", function () {
-        clearForm();
-    });
-
-
-    $(document).ready(function () {
-        loadCustomers();
-    });
-
-    function showSuccess(message){
+    function showSuccess(message) {
         Swal.fire({
             icon: 'success',
             title: 'Success',
@@ -224,7 +98,7 @@
         });
     }
 
-    function showError(message){
+    function showError(message) {
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
@@ -232,9 +106,172 @@
         });
     }
 
+    function loadCustomers() {
+        $.ajax({
+            url: BASE_URL,
+            method: "GET",
+            dataType: "json",
+            success: function (resp) {
+                $("#tblCustomers").empty();
+
+                const customers = resp?.data || [];
+                customers.forEach((c) => {
+                    $("#tblCustomers").append(`
+            <tr>
+              <td>${c.cId ?? ""}</td>
+              <td>${c.cName ?? ""}</td>
+              <td>${c.cAddress ?? ""}</td>
+            </tr>
+          `);
+                });
+            },
+            error: function (xhr) {
+                const resp = xhr.responseJSON;
+                showError(resp?.message || xhr.responseText || "Failed to load customers");
+            }
+        });
+    }
+
+    $("#tblCustomers").on("click", "tr", function () {
+        $("#cusId").val($(this).children().eq(0).text().trim());
+        $("#cusName").val($(this).children().eq(1).text().trim());
+        $("#cusAddress").val($(this).children().eq(2).text().trim());
+    });
+
+    // ✅ ADD (POST)
+    $("#btnAdd").on("click", function () {
+        const customer = {
+            cName: $("#cusName").val().trim(),
+            cAddress: $("#cusAddress").val().trim()
+        };
+
+        $.ajax({
+            url: BASE_URL,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(customer),
+
+            success: function (resp) {
+                const code = resp?.code ?? resp?.status;
+                if (code === 201 || code === 200) {
+                    showSuccess(resp.message || "Customer saved");
+                    clearForm();
+                    loadCustomers();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
+            },
+
+            error: function (xhr) {
+                const resp = xhr.responseJSON;
+
+                if (resp?.data && typeof resp.data === "object") {
+                    const msg = Object.entries(resp.data)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join("\n");
+                    showError(msg);
+                } else {
+                    showError(resp?.message || xhr.responseText || "Bad Request (400)");
+                }
+            }
+        });
+    });
+
+    // ✅ UPDATE (PUT)
+    $("#btnUpdate").on("click", function () {
+        const customer = {
+            cId: Number($("#cusId").val().trim()),
+            cName: $("#cusName").val().trim(),
+            cAddress: $("#cusAddress").val().trim()
+        };
+
+        if (!customer.cId || Number.isNaN(customer.cId)) {
+            showError("Select a customer first (valid ID required)");
+            return;
+        }
+
+        $.ajax({
+            url: BASE_URL,
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(customer),
+
+            success: function (resp) {
+                const code = resp?.code ?? resp?.status;
+                if (code === 200 || code === 201) {
+                    showSuccess(resp.message || "Customer updated");
+                    clearForm();
+                    loadCustomers();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
+            },
+
+            error: function (xhr) {
+                const resp = xhr.responseJSON;
+
+                if (resp?.data && typeof resp.data === "object") {
+                    const msg = Object.entries(resp.data)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join("\n");
+                    showError(msg);
+                } else {
+                    showError(resp?.message || xhr.responseText || "Bad Request (400)");
+                }
+            }
+        });
+    });
+
+    // ✅ DELETE (DELETE)
+    $("#btnDelete").on("click", function () {
+        const id = $("#cusId").val().trim();
+
+        if (!id) {
+            showError("Enter/select a customer ID first!");
+            return;
+        }
+
+        if (!confirm(`Delete customer ${id}?`)) return;
+
+        $.ajax({
+            url: `${BASE_URL}/${encodeURIComponent(id)}`,
+            method: "DELETE",
+
+            success: function (resp) {
+                const code = resp?.code ?? resp?.status;
+                if (code === 200 || code === 201) {
+                    showSuccess(resp.message || "Customer deleted");
+                    clearForm();
+                    loadCustomers();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
+            },
+
+            error: function (xhr) {
+                const resp = xhr.responseJSON;
+
+                if (resp?.data && typeof resp.data === "object") {
+                    const msg = Object.entries(resp.data)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join("\n");
+                    showError(msg);
+                } else {
+                    showError(resp?.message || xhr.responseText || "Request failed");
+                }
+            }
+        });
+    });
+
+    $("#btnClear").on("click", clearForm);
+
+    $(document).ready(function () {
+        loadCustomers();
+    });
 </script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
 </html>

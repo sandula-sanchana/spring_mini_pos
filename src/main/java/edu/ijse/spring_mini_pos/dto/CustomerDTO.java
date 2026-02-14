@@ -1,5 +1,6 @@
 package edu.ijse.spring_mini_pos.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @Setter
 public class CustomerDTO {
 
-    @Positive(message = "customer id must be a positive number")
+    @Nullable
     private Integer cId;
 
     @NotBlank(message = "customer name is mandatory")
