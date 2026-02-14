@@ -2,9 +2,9 @@ package edu.ijse.spring_mini_pos.controller;
 
 import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.service.CustomerService;
-import edu.ijse.spring_mini_pos.service.impl.CustomerServiceImpl;
 import edu.ijse.spring_mini_pos.util.APIResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,47 +12,88 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("app/v1/customer")
+@RequestMapping("/app/v1/customer")
 @CrossOrigin
+@RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    public CustomerController(CustomerServiceImpl customerServiceImpl) {
-        this.customerService = customerServiceImpl;
-    }
-
 
     @PostMapping
-    public ResponseEntity<APIResponse<String>> saveCustomer(@RequestBody @Valid CustomerDTO customerDTO) {
-        customerService.saveCustomer(customerDTO);
-        return new ResponseEntity(new APIResponse<>(
-                201,"customer saved",null
-        ),HttpStatus.CREATED);
+    public ResponseEntity<APIResponse<String>> saveCustomer(
+            @RequestBody @Valid CustomerDTO customerDTO) {
 
+        customerService.saveCustomer(customerDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new APIResponse<>(
+                        201,
+                        "Customer saved successfully",
+                        null
+                ));
     }
 
 
     @PutMapping
-    public void updateCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<APIResponse<String>> updateCustomer(
+            @RequestBody @Valid CustomerDTO customerDTO) {
+
         customerService.updateCustomer(customerDTO);
+
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        200,
+                        "Customer updated successfully",
+                        null
+                )
+        );
     }
 
 
     @GetMapping
-    public List<CustomerDTO> getAllCustomers() {
-        return customerService.getAllCustomers();
+    public ResponseEntity<APIResponse<List<CustomerDTO>>> getAllCustomers() {
+
+        List<CustomerDTO> customers = customerService.getAllCustomers();
+
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        200,
+                        "Customer list fetched",
+                        customers
+                )
+        );
     }
 
 
     @GetMapping("/{id}")
-    public CustomerDTO getCustomer(@PathVariable int id) {
-        return customerService.getCustomer(id);
+    public ResponseEntity<APIResponse<CustomerDTO>> getCustomer(
+            @PathVariable int id) {
+
+        CustomerDTO customer = customerService.getCustomer(id);
+
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        200,
+                        "Customer fetched",
+                        customer
+                )
+        );
     }
 
 
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable int id) {
+    public ResponseEntity<APIResponse<String>> deleteCustomer(
+            @PathVariable int id) {
+
         customerService.deleteCustomer(id);
+
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        200,
+                        "Customer deleted successfully",
+                        null
+                )
+        );
     }
 }

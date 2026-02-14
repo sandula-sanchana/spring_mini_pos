@@ -102,21 +102,27 @@
             url: BASE_URL,
             method: "GET",
             dataType: "json",
-            success: function (customers) {
+            success: function (resp) {
                 $("#tblCustomers").empty();
+
+                const customers = resp.data || [];
 
                 customers.forEach((c) => {
                     $("#tblCustomers").append(`
-            <tr>
-              <td>${c.cId}</td>
-              <td>${c.cName}</td>
-              <td>${c.cAddress}</td>
-            </tr>
-          `);
+          <tr>
+            <td>${c.cId}</td>
+            <td>${c.cName}</td>
+            <td>${c.cAddress}</td>
+          </tr>
+        `);
                 });
+            },
+            error: function (xhr) {
+                showError(xhr.responseJSON?.message || "Failed to load customers");
             }
         });
     }
+
 
 
     $("#tblCustomers").on("click", "tr", function () {

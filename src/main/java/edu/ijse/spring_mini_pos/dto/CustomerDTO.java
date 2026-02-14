@@ -19,7 +19,7 @@ public class CustomerDTO {
     private Integer cId;
     @NotBlank(message = "customer name is mandatory")
     private String cName;
-    @NotBlank()
+    @NotBlank(message = "address must be longer than 10 char")
     @Size(min = 10)
     private String cAddress;
 }
