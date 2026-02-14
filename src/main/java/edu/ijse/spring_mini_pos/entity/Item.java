@@ -16,6 +16,7 @@ import lombok.Setter;
 @Setter
 public class Item {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private String name;
     private int qty;
