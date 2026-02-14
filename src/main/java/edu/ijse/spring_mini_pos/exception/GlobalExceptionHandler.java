@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<APIResponse<String>> nullExceptionHandler(Exception e){
+    public ResponseEntity<APIResponse<String>> nullExceptionHandler(NullPointerException e){
         return new ResponseEntity<>(new APIResponse<>(
                 HttpStatus.BAD_REQUEST.value(),
                 "null values are not allowed",
