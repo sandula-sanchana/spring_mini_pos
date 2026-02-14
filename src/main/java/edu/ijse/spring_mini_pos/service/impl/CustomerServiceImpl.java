@@ -5,6 +5,7 @@ import edu.ijse.spring_mini_pos.entity.Customer;
 import edu.ijse.spring_mini_pos.exception.CustomException;
 import edu.ijse.spring_mini_pos.respository.CustomerRepository;
 import edu.ijse.spring_mini_pos.service.CustomerService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +15,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
-
-
     private final ModelMapper modelMapper;
-
-    public CustomerServiceImpl(CustomerRepository customerRepository, ModelMapper modelMapper) {
-        this.customerRepository = customerRepository;
-        this.modelMapper = modelMapper;
-    }
-
 
     @Override
     public void saveCustomer(CustomerDTO customerDTO) {

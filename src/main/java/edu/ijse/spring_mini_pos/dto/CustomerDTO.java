@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 public class CustomerDTO {
 
-
     @Positive(message = "customer id must be a positive number")
     private Integer cId;
 
