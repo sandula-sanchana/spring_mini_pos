@@ -14,6 +14,7 @@ import edu.ijse.spring_mini_pos.respository.OrderRepository;
 import edu.ijse.spring_mini_pos.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import edu.ijse.spring_mini_pos.entity.Customer;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -29,56 +30,32 @@ public class OrderServiceImpl implements OrderService {
     private final ItemRepository itemRepo;
 
     @Override
-    public void placeOrder(OrderDTO orderDTO) {
+    public Integer placeOrder(OrderDTO orderDTO) {
 
-        // 1) basic validation (BAD REQUEST 400)
-        if (orderDTO == null) {
-            throw new BadRequestException("Request body is missing");
-        }
-        if (orderDTO.getOrderId() == null ) {
-            throw new BadRequestException("Order ID is required");
-        }
-        if (orderDTO.getCustomerId() == null) {
-            throw new BadRequestException("Customer ID is required");
-        }
-        if (orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
+        // 1) basic validation
+        if (orderDTO == null) throw new BadRequestException("Request body is missing");
+        if (orderDTO.getCustomerId() == null) throw new BadRequestException("Customer ID is required");
+        if (orderDTO.getItems() == null || orderDTO.getItems().isEmpty())
             throw new BadRequestException("Cart is empty");
-        }
 
-        // customer must exist (NOT FOUND 404)
-        if (!customerRepo.existsById(orderDTO.getCustomerId())) {
-            throw new ResourceNotFoundException("Customer not found: " + orderDTO.getCustomerId());
-        }
+        // 2) load customer entity (must exist)
+        Customer customer = customerRepo.findById(orderDTO.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found: " + orderDTO.getCustomerId()));
 
-        // order id must be unique (BAD REQUEST 400)
-        if (orderRepo.existsById(orderDTO.getOrderId())) {
-            throw new BadRequestException("Order already exists: " + orderDTO.getOrderId());
-        }
+        // 3) create + save order header (ID is generated)
+        Orders order = new Orders();
+        order.setCustomer(customer);
+        order.setOrderDate(LocalDate.now());
+        order.setTotal(orderDTO.getTotal()); // (better: compute from details)
+        order = orderRepo.save(order);
 
-        // 2) save order header
-        Orders order = new Orders(
-                orderDTO.getOrderId(),
-                orderDTO.getCustomerId(),
-                LocalDate.now(),
-                orderDTO.getTotal()
-        );
-        orderRepo.save(order);
-
-        // 3) details + stock update
+        // 4) create details + update stock
         for (OrderDetailDTO d : orderDTO.getItems()) {
 
-            if (d == null) {
-                throw new BadRequestException("Order item is missing");
-            }
-            if (d.getItemId() == null ) {
-                throw new BadRequestException("Item ID is required in order detail");
-            }
-            if (d.getQty() <= 0) {
-                throw new BadRequestException("Invalid qty for item: " + d.getItemId());
-            }
-            if (d.getUnitPrice() <= 0) {
-                throw new BadRequestException("Invalid unit price for item: " + d.getItemId());
-            }
+            if (d == null) throw new BadRequestException("Order item is missing");
+            if (d.getItemId() == null) throw new BadRequestException("Item ID is required in order detail");
+            if (d.getQty() <= 0) throw new BadRequestException("Invalid qty for item: " + d.getItemId());
+            if (d.getUnitPrice() <= 0) throw new BadRequestException("Invalid unit price for item: " + d.getItemId());
 
             Item item = itemRepo.findById(d.getItemId())
                     .orElseThrow(() -> new ResourceNotFoundException("Item not found: " + d.getItemId()));
@@ -90,20 +67,30 @@ public class OrderServiceImpl implements OrderService {
                 );
             }
 
-            // reduce stock (managed entity inside @Transactional)
+            // reduce stock (managed entity → auto update on commit)
             item.setQty(item.getQty() - d.getQty());
 
-            // save order detail
-            OrderDetail detail = new OrderDetail(
-                    null, // auto id
-                    orderDTO.getOrderId(),
-                    d.getItemId(),
-                    d.getQty(),
-                    d.getUnitPrice()
-            );
+            OrderDetail detail = new OrderDetail();
+            detail.setOrder(order);     // ✅ set FK via relationship
+            detail.setItem(item);       // ✅ set FK via relationship
+            detail.setQty(d.getQty());
+            detail.setUnitPrice(d.getUnitPrice());
+
             orderDetailRepo.save(detail);
         }
 
-        // any exception => rollback all ✅
+        // any exception => rollback all ✅ because @Transactional
+
+        return order.getOrderId();
     }
+
+    @Override
+    public Integer getNextOrderId() {
+        Integer maxId = orderRepo.findMaxOrderId();
+        return (maxId == null ? 1 : maxId + 1);
+    }
+
+
+
 }
+
