@@ -24,29 +24,29 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void saveItem(ItemDTO itemDTO) {
-        if (itemDTO == null) {
-            throw new BadRequestException("Request body is missing");
-        }
-        if (itemRepository.existsById(itemDTO.getItemId())) {
-            throw new BadRequestException("Item already exists!");
+        if (itemDTO == null) throw new BadRequestException("Request body is missing");
+
+        if (itemDTO.getId() != null) {
+            throw new BadRequestException("ID must be null when creating an item");
         }
 
         itemRepository.save(modelMapper.map(itemDTO, Item.class));
     }
+
 
     @Override
     public void updateItem(ItemDTO itemDTO) {
         if (itemDTO == null) {
             throw new BadRequestException("Request body is missing");
         }
-        if (itemDTO.getItemId() == null || itemDTO.getItemId().isBlank()) {
+        if (itemDTO.getId() == null) {
             throw new BadRequestException("Item ID is required for update");
         }
 
-        Item existing = itemRepository.findById(itemDTO.getItemId())
+        Item existing = itemRepository.findById(itemDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
 
-        existing.setName(itemDTO.getItemName());
+        existing.setName(itemDTO.getName());
         existing.setQty(itemDTO.getQty());
         existing.setPrice(itemDTO.getPrice());
     }
@@ -58,14 +58,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDTO getItem(String id) {
+    public ItemDTO getItem(Integer id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
         return modelMapper.map(item, ItemDTO.class);
     }
 
     @Override
-    public void deleteItem(String id) {
+    public void deleteItem(Integer id) {
         if (!itemRepository.existsById(id)) {
             throw new ResourceNotFoundException("Item not found");
         }

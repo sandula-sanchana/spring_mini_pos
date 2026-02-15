@@ -5,7 +5,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class OrderDetailDTO {
-    private String itemId;
+    private Integer itemId;
     private int qty;
     private double unitPrice;
 }

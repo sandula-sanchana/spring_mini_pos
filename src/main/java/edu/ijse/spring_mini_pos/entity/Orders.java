@@ -1,6 +1,8 @@
 package edu.ijse.spring_mini_pos.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -12,9 +14,9 @@ import java.time.LocalDate;
 public class Orders {
 
     @Id
-    private String orderId;
-
-    private String customerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer orderId;
+    private Integer customerId;
     private LocalDate orderDate;
     private double total;
 }

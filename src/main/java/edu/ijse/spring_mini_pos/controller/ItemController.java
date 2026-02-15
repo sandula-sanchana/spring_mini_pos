@@ -63,7 +63,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<ItemDTO>> getItem(@PathVariable String id) {
+    public ResponseEntity<APIResponse<ItemDTO>> getItem(@PathVariable Integer id) {
 
         ItemDTO item = itemService.getItem(id);
 
@@ -77,7 +77,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<APIResponse<String>> deleteItem(@PathVariable String id) {
+    public ResponseEntity<APIResponse<String>> deleteItem(@PathVariable Integer id) {
 
         itemService.deleteItem(id);
 

@@ -7,8 +7,8 @@ import java.util.List;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class OrderDTO {
-    private String orderId;
-    private String customerId;
+    private Integer orderId;
+    private Integer customerId;
     private double total;
     private List<OrderDetailDTO> items;
 }

@@ -12,20 +12,30 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemDTO {
-
+    
     @Nullable
-    private String itemId;
+    private Integer id;
     @NotBlank(message = "Item name is mandatory")
     @Size(min = 3, max = 50, message = "Item name must be between 3 and 50 characters")
     @Pattern(
             regexp = "^[A-Za-z0-9 ]+$",
             message = "Item name can contain only letters, numbers and spaces"
     )
-    private String itemName;
+    @NotBlank
+    private String name;
+
 
     @Min(value = 0, message = "Quantity cannot be negative")
-    private int qty;
+    @NotNull
+    private Integer qty;
 
     @Positive(message = "Price must be greater than 0")
+    @NotNull @PositiveOrZero
     private double price;
+
+
+
+
+
+
 }

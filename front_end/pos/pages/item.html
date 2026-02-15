@@ -92,6 +92,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     const BASE_URL = "http://localhost:8080/app/v1/item";
@@ -104,82 +105,112 @@
         $("#itemId").focus();
     }
 
+    function showSuccess(message) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: message,
+            timer: 1800,
+            showConfirmButton: false
+        });
+    }
+
+    function showError(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: message
+        });
+    }
+
     function loadItems() {
         $.ajax({
             url: BASE_URL,
             method: "GET",
             dataType: "json",
-            success: function (items) {
+            success: function (resp) {
                 $("#itemTable").empty();
+
+                const items = resp?.data || [];
 
                 items.forEach((i) => {
                     $("#itemTable").append(`
                         <tr>
-                          <td>${i.itemId}</td>
-                          <td>${i.itemName}</td>
-                          <td>${i.qty}</td>
-                          <td>${i.price}</td>
+                          <td>${i.id ?? ""}</td>
+                          <td>${i.name ?? ""}</td>
+                          <td>${i.qty ?? ""}</td>
+                          <td>${i.price ?? ""}</td>
                         </tr>
                     `);
                 });
             },
             error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Load failed: " + (xhr.responseText || xhr.status));
+                const resp = xhr.responseJSON;
+                showError(resp?.message || xhr.responseText || "Failed to load items");
             }
         });
     }
 
-
     $("#itemTable").on("click", "tr", function () {
-        $("#itemId").val($(this).children().eq(0).text());
-        $("#itemName").val($(this).children().eq(1).text());
-        $("#itemQty").val($(this).children().eq(2).text());
-        $("#itemPrice").val($(this).children().eq(3).text());
+        $("#itemId").val($(this).children().eq(0).text().trim());
+        $("#itemName").val($(this).children().eq(1).text().trim());
+        $("#itemQty").val($(this).children().eq(2).text().trim());
+        $("#itemPrice").val($(this).children().eq(3).text().trim());
     });
 
 
     $("#addBtn").on("click", function () {
-        const item = {
-            itemId: $("#itemId").val().trim(),
-            itemName: $("#itemName").val().trim(),
-            qty: $("#itemQty").val().trim(),
-            price: $("#itemPrice").val().trim()
-        };
 
-        if (!item.itemId || !item.itemName || !item.qty || !item.price) {
-            alert("Please fill all fields!");
-            return;
-        }
+        const item = {
+            name: $("#itemName").val().trim(),
+            qty: Number($("#itemQty").val()),
+            price: Number($("#itemPrice").val())
+        };
 
         $.ajax({
             url: BASE_URL,
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(item),
-            success: function () {
-                alert("Item saved ✅");
-                clearForm();
-                loadItems();
+
+            success: function (resp) {
+                const code = resp?.code ?? resp?.status;
+                if (code === 201 || code === 200) {
+                    showSuccess(resp.message || "Item saved");
+                    clearForm();
+                    loadItems();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
             },
+
             error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Save failed: " + (xhr.responseText || xhr.status));
+                const resp = xhr.responseJSON;
+
+                if (resp?.data && typeof resp.data === "object") {
+                    const msg = Object.entries(resp.data)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join("\n");
+                    showError(msg);
+                } else {
+                    showError(resp?.message || xhr.responseText || "Bad Request (400)");
+                }
             }
         });
     });
 
 
     $("#updateBtn").on("click", function () {
+
         const item = {
-            itemId: $("#itemId").val().trim(),
-            itemName: $("#itemName").val().trim(),
-            qty: $("#itemQty").val().trim(),
-            price: $("#itemPrice").val().trim()
+            id: Number($("#itemId").val().trim()),
+            name: $("#itemName").val().trim(),
+            qty: Number($("#itemQty").val()),
+            price: Number($("#itemPrice").val())
         };
 
-        if (!item.itemId || !item.itemName || !item.qty || !item.price) {
-            alert("Fill all fields!");
+        if (!item.id || Number.isNaN(item.id)) {
+            showError("Select an item first (valid ID required)");
             return;
         }
 
@@ -188,23 +219,25 @@
             method: "PUT",
             contentType: "application/json",
             data: JSON.stringify(item),
-            success: function () {
-                alert("Item updated ✅");
+            success: function (resp) {
+                showSuccess(resp.message || "Item updated");
                 clearForm();
                 loadItems();
             },
             error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Update failed: " + (xhr.responseText || xhr.status));
+                showError(xhr.responseJSON?.message || xhr.responseText || "Update failed");
             }
         });
     });
 
+
+
     $("#deleteBtn").on("click", function () {
+
         const id = $("#itemId").val().trim();
 
         if (!id) {
-            alert("Enter/select an item ID first!");
+            showError("Enter/select an item ID first!");
             return;
         }
 
@@ -213,27 +246,40 @@
         $.ajax({
             url: `${BASE_URL}/${encodeURIComponent(id)}`,
             method: "DELETE",
-            success: function () {
-                alert("Item deleted ✅");
-                clearForm();
-                loadItems();
+
+            success: function (resp) {
+                const code = resp?.code ?? resp?.status;
+                if (code === 200 || code === 201) {
+                    showSuccess(resp.message || "Item deleted");
+                    clearForm();
+                    loadItems();
+                } else {
+                    showError(resp.message || "Something went wrong");
+                }
             },
+
             error: function (xhr) {
-                console.log(xhr.responseText);
-                alert("Delete failed: " + (xhr.responseText || xhr.status));
+                const resp = xhr.responseJSON;
+
+                if (resp?.data && typeof resp.data === "object") {
+                    const msg = Object.entries(resp.data)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join("\n");
+                    showError(msg);
+                } else {
+                    showError(resp?.message || xhr.responseText || "Request failed");
+                }
             }
         });
     });
 
-
-    $("#clearBtn").on("click", function () {
-        clearForm();
-    });
+    $("#clearBtn").on("click", clearForm);
 
     $(document).ready(function () {
         loadItems();
     });
 </script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

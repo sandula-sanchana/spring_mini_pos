@@ -17,7 +17,7 @@ import lombok.Setter;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
     private String name;
     private int qty;
     private double price;
