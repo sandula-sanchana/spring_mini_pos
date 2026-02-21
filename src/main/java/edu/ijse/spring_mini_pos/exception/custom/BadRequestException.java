@@ -1,4 +1,4 @@
-package edu.ijse.spring_mini_pos.exception;
+package edu.ijse.spring_mini_pos.exception.custom;
 
 public class BadRequestException extends  RuntimeException{
 

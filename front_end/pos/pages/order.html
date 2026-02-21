@@ -18,6 +18,81 @@
 
         .app-shell{ max-width:1100px; }
 
+        /* ✅ Force readable text everywhere */
+        body, .card, .table, .table * {
+            color: #e5e7eb;
+        }
+
+        /* ✅ Inputs / selects / disabled fields */
+        .form-control, .form-select {
+            background: rgba(2,6,23,.55) !important;
+            color: #e5e7eb !important;
+            border: 1px solid rgba(255,255,255,.10) !important;
+        }
+
+        .form-control:disabled, .form-select:disabled {
+            background: rgba(2,6,23,.35) !important;
+            color: rgba(229,231,235,.75) !important;
+            -webkit-text-fill-color: rgba(229,231,235,.75) !important;
+            opacity: 1 !important;
+        }
+
+        /* ✅ Placeholder text */
+        .form-control::placeholder {
+            color: rgba(229,231,235,.55) !important;
+        }
+
+        /* ✅ Fix dropdown options (important: options are NOT affected by .form-select in many browsers) */
+        select option {
+            background: #0b1220;   /* solid dark so it’s readable */
+            color: #e5e7eb;
+        }
+
+        /* ✅ Table header + cells (some browsers keep table text dark) */
+        .table thead th {
+            color: #e5e7eb !important;
+        }
+        .table tbody td {
+            color: #e5e7eb !important;
+        }
+
+        /* ✅ Autofill fix (Chrome turns inputs white/yellow) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        select:-webkit-autofill {
+            -webkit-text-fill-color: #e5e7eb !important;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(2,6,23,.75) inset !important;
+            transition: background-color 9999s ease-in-out 0s;
+        }
+
+        /* ✅ Force tbody rows to stay dark */
+        .table tbody tr {
+            background-color: rgba(2,6,23,.75) !important;
+        }
+
+        .table tbody tr td {
+            background-color: rgba(2,6,23,.75) !important;
+            color: #e5e7eb !important;
+        }
+
+        /* ✅ Hover effect override */
+        .table-hover tbody tr:hover {
+            background-color: rgba(99,102,241,.12) !important;
+        }
+
+        /* ✅ Remove Bootstrap white striping if enabled */
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(2,6,23,.75) !important;
+        }
+
+        /* ✅ Make buttons inside table consistent */
+        .table .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+
         .navbar{
             border-bottom:1px solid rgba(255,255,255,.08);
             backdrop-filter: blur(10px);

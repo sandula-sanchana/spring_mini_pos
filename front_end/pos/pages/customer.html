@@ -257,7 +257,18 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- ✅ SCRIPT UNCHANGED -->
+<!--"AJAX stands for Asynchronous JavaScript And XML.-->
+<!--It allows the frontend to communicate with the backend without reloading the page."-->
+
+<!--Then explain simply:-->
+
+<!--It sends HTTP requests (GET, POST, PUT, DELETE)-->
+
+<!--It receives JSON responses-->
+
+<!--It updates the page dynamically-->
+
+
 <script>
     const BASE_URL = "http://localhost:8080/app/v1/customer";
 
@@ -372,7 +383,7 @@
 
         $.ajax({
             url: BASE_URL,
-            method: "PUT",
+            method: "PUT", //http request
             contentType: "application/json",
             data: JSON.stringify(customer),
 

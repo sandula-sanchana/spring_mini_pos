@@ -2,8 +2,8 @@ package edu.ijse.spring_mini_pos.service.impl;
 
 import edu.ijse.spring_mini_pos.dto.CustomerDTO;
 import edu.ijse.spring_mini_pos.entity.Customer;
-import edu.ijse.spring_mini_pos.exception.BadRequestException;
-import edu.ijse.spring_mini_pos.exception.ResourceNotFoundException;
+import edu.ijse.spring_mini_pos.exception.custom.BadRequestException;
+import edu.ijse.spring_mini_pos.exception.custom.ResourceNotFoundException;
 import edu.ijse.spring_mini_pos.respository.CustomerRepository;
 import edu.ijse.spring_mini_pos.service.CustomerService;
 

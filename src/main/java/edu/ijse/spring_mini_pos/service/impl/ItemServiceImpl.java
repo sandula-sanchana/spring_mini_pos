@@ -2,8 +2,8 @@ package edu.ijse.spring_mini_pos.service.impl;
 
 import edu.ijse.spring_mini_pos.dto.ItemDTO;
 import edu.ijse.spring_mini_pos.entity.Item;
-import edu.ijse.spring_mini_pos.exception.BadRequestException;
-import edu.ijse.spring_mini_pos.exception.ResourceNotFoundException;
+import edu.ijse.spring_mini_pos.exception.custom.BadRequestException;
+import edu.ijse.spring_mini_pos.exception.custom.ResourceNotFoundException;
 import edu.ijse.spring_mini_pos.respository.ItemRepository;
 import edu.ijse.spring_mini_pos.service.ItemService;
 import lombok.RequiredArgsConstructor;

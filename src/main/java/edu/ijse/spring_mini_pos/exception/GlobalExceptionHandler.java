@@ -1,5 +1,7 @@
 package edu.ijse.spring_mini_pos.exception;
 
+import edu.ijse.spring_mini_pos.exception.custom.BadRequestException;
+import edu.ijse.spring_mini_pos.exception.custom.ResourceNotFoundException;
 import edu.ijse.spring_mini_pos.util.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
